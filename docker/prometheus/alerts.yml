@@ -1,0 +1,44 @@
+groups:
+  - name: stack
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "{{ $labels.job }} exporter {{ $labels.instance }} is down"
+
+      - alert: MariaDBDown
+        expr: mysql_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "MariaDB {{ $labels.role }} is not responding"
+
+      - alert: ReplicationStopped
+        expr: mysql_slave_status_slave_io_running{role="replica"} == 0 or mysql_slave_status_slave_sql_running{role="replica"} == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "Replication thread stopped on the replica: reads are getting stale"
+
+      - alert: ReplicationLag
+        expr: mysql_slave_status_seconds_behind_master{role="replica"} > 30
+        for: 2m
+        labels: {severity: warning}
+        annotations:
+          summary: "Replica is {{ $value }}s behind the primary"
+
+      - alert: PhpFpmPoolExhausted
+        expr: phpfpm_listen_queue > 0
+        for: 2m
+        labels: {severity: warning}
+        annotations:
+          summary: "Requests are queuing for a free php-fpm worker: raise pm.max_children or find slow requests"
+
+      - alert: RedisMemoryHigh
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels: {severity: warning}
+        annotations:
+          summary: "Redis uses over 90% of maxmemory, keys are being evicted"

@@ -1,0 +1,10 @@
+[mariadb]
+server_id         = 1
+log_bin           = mysql-bin
+binlog_format     = ROW
+gtid_strict_mode  = ON
+expire_logs_days  = 3
+# Durability: no committed transaction is lost on crash.
+sync_binlog                    = 1
+innodb_flush_log_at_trx_commit = 1
+innodb_buffer_pool_size        = 256M

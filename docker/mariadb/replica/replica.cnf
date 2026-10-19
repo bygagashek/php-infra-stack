@@ -1,0 +1,12 @@
+[mariadb]
+server_id        = 2
+# The application user cannot write here; replication and root still can.
+read_only        = ON
+log_bin          = mysql-bin
+log_slave_updates = ON
+gtid_strict_mode = ON
+relay_log        = relay-bin
+# Apply in parallel, preserving the primary's commit order.
+slave_parallel_threads = 4
+slave_parallel_mode    = optimistic
+innodb_buffer_pool_size = 256M
